@@ -1,0 +1,284 @@
+{
+  "MBTI_questions": [
+    {
+      "id": 1,
+      "question": {
+        "en": "Where do I typically derive motivation and confidence from:"
+      },
+      "options": {
+        "en": ["Others.", "My own thoughts."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 2,
+      "question": {
+        "en": "When attending a social gathering, I usually:"
+      },
+      "options": {
+        "en": ["Grow more energetic as the night progresses and might be the last to leave once engaged.", "Feel tired and want to go home early in the evening."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 3,
+      "question": {
+        "en": "Which sounds more appealing?"
+      },
+      "options": {
+        "en": ["Going to a lively social venue with my partner.", "Staying home for a special night with my partner, like watching a movie and enjoying takeout."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 4,
+      "question": {
+        "en": "During dates, I typically:"
+      },
+      "options": {
+        "en": ["Am generally talkative.", "Remain quiet and reserved until I feel ready to speak."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 5,
+      "question": {
+        "en": "In the past, I've met most romantic partners:"
+      },
+      "options": {
+        "en": ["Through public settings like work, school, or friends introducing me.", "Through private channels like dating apps, online chats, or close friends/family."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 6,
+      "question": {
+        "en": "When communicating with my partner, I prefer:"
+      },
+      "options": {
+        "en": ["Direct verbal communication or phone calls.", "Written communication like texts or letters."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 7,
+      "question": {
+        "en": "I find it easier to express my feelings:"
+      },
+      "options": {
+        "en": ["Out loud in real-time conversations.", "Through writing or artistic expression."]
+      },
+      "dimension": "EI"
+    },
+    {
+      "id": 8,
+      "question": {
+        "en": "When focusing on a project or task, I prefer:"
+      },
+      "options": {
+        "en": ["Concrete facts, realistic details, and tangible outcomes.", "Big-picture possibilities, creative concepts, and future potential."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 9,
+      "question": {
+        "en": "When processing new information, I trust:"
+      },
+      "options": {
+        "en": ["Direct observation and past experience.", "Intuition, patterns, and gut feelings."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 10,
+      "question": {
+        "en": "When describing an event, I tend to:"
+      },
+      "options": {
+        "en": ["Give a step-by-step account of what literally happened.", "Summarize the overall vibe, meaning, and impression."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 11,
+      "question": {
+        "en": "I tend to admire people who are:"
+      },
+      "options": {
+        "en": ["Grounded, practical, and dependable.", "Imaginative, innovative, and visionary."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 12,
+      "question": {
+        "en": "When solving problems, I rely on:"
+      },
+      "options": {
+        "en": ["Proven methods and established procedures.", "Novel solutions and unorthodox ideas."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 13,
+      "question": {
+        "en": "I am more interested in:"
+      },
+      "options": {
+        "en": ["What is real and present right now.", "What could be possible in the future."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 14,
+      "question": {
+        "en": "When learning something new, I prefer:"
+      },
+      "options": {
+        "en": ["Hands-on practice and clear examples.", "Theoretical frameworks and big-picture principles."]
+      },
+      "dimension": "SN"
+    },
+    {
+      "id": 15,
+      "question": {
+        "en": "When making difficult decisions, I prioritize:"
+      },
+      "options": {
+        "en": ["Objective logic, fairness, and consistent principles.", "Personal values, empathy, and harmony for those involved."]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 16,
+      "question": {
+        "en": "When someone brings me a problem, my natural response is to:"
+      },
+      "options": {
+        "en": ["Analyze the situation and offer practical solutions.", "Listen empathetically and offer emotional support."]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 17,
+      "question": {
+        "en": "I value being seen as:"
+      },
+      "options": {
+        "en": ["Competent, logical, and clear-headed.", "Compassionate, caring, and authentic."]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 18,
+      "question": {
+        "en": "In arguments, I care most about:"
+      },
+      "options": {
+        "en": ["Truth, logic, and factual accuracy.", "Maintaining relationships and protecting feelings."]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 19,
+      "question": {
+        "en": "When evaluating a plan, I ask first:"
+      },
+      "options": {
+        "en": ["Is it effective, efficient, and logical?", "Will it make people happy and feel supported?"]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 20,
+      "question": {
+        "en": "I am more easily persuaded by:"
+      },
+      "options": {
+        "en": ["Strong evidence and sound reasoning.", "Emotional appeal and personal stories."]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 21,
+      "question": {
+        "en": "When giving feedback, I am:"
+      },
+      "options": {
+        "en": ["Direct, honest, and task-focused.", "Tactful, gentle, and encouraging."]
+      },
+      "dimension": "TF"
+    },
+    {
+      "id": 22,
+      "question": {
+        "en": "My ideal schedule is:"
+      },
+      "options": {
+        "en": ["Structured, organized, and planned ahead of time.", "Flexible, spontaneous, and open to last-minute changes."]
+      },
+      "dimension": "JP"
+    },
+    {
+      "id": 23,
+      "question": {
+        "en": "Before going on a trip, I prefer to:"
+      },
+      "options": {
+        "en": ["Create a detailed itinerary and reserve everything in advance.", "Pack light and figure out what to do when I arrive."]
+      },
+      "dimension": "JP"
+    },
+    {
+      "id": 24,
+      "question": {
+        "en": "When working on a deadline, I:"
+      },
+      "options": {
+        "en": ["Finish early to avoid last-minute stress.", "Work best under pressure as the deadline approaches."]
+      },
+      "dimension": "JP"
+    },
+    {
+      "id": 25,
+      "question": {
+        "en": "In daily life, I prefer to:"
+      },
+      "options": {
+        "en": ["Have closure, decisions made, and matters settled.", "Keep options open and adapt as new information comes in."]
+      },
+      "dimension": "JP"
+    },
+    {
+      "id": 26,
+      "question": {
+        "en": "My workspace / room is typically:"
+      },
+      "options": {
+        "en": ["Neat, organized, with everything in its designated place.", "Organized chaos, where I know where things are even if messy."]
+      },
+      "dimension": "JP"
+    },
+    {
+      "id": 27,
+      "question": {
+        "en": "I feel most comfortable when:"
+      },
+      "options": {
+        "en": ["Following a routine or a clear checklist.", "Having freedom to improvise and adapt on the fly."]
+      },
+      "dimension": "JP"
+    },
+    {
+      "id": 28,
+      "question": {
+        "en": "When making weekend plans, I usually:"
+      },
+      "options": {
+        "en": ["Lock in plans several days in advance.", "Wait until the weekend arrives to see how I feel."]
+      },
+      "dimension": "JP"
+    }
+  ]
+}

@@ -35,8 +35,9 @@
 ```mermaid
 graph LR
     User[User Session & Photo / Attribute Input] --> Sanitize[Input Moderation & Guardrails]
-    Sanitize --> Agent1[Agent 1: Dynamic Question & Intake]
-    Agent1 -->|Answers & Free-form Input| Agent2[Agent 2: Trait & Title Synthesizer]
+    Sanitize --> Agent1[Agent 1: Dynamic Question & Intake Engine]
+    Agent1 -->|MC Choices + Free-form Context| Calc[Deterministic MBTI Calculator Engine]
+    Calc -->|4-Letter Baseline Anchor| Agent2[Agent 2: Trait & Title Synthesizer]
     Agent2 -->|Top Traits, MBTI Anchor & Title| Deep[Deep Analysis Engine]
     Agent2 -->|3-Layer Prompt Payload| Agent3[Agent 3: Caricature Avatar Generator]
     Agent3 --> Fallback{Image Gen Status}
@@ -47,32 +48,31 @@ graph LR
 ```
 
 ### 3.1 Agent 1: Dynamic Question Intake Engine
-- **Scope**: Evaluates holistic behavioral dimensions (Self, Emotion, Attitude, Action, Social) anchored on MBTI/Big-Five principles.
-- **Question Bounds & Termination Matrix**:
-  - **Hard Limits**: Minimum **8 questions**, Maximum **12 questions**.
-  - **Early Stop Rule**: Session terminates early (at Q8–Q10) if trait confidence matrix achieves $> 85\%$ variance separation.
-- **Input Types & Moderation Guardrails**:
-  - Multiple-choice options + optional free-form text input (max 280 characters).
-  - **Moderation Layer**: Input sanitization strips prompt injection patterns and profane content. Toxic free-form inputs gracefully default to closest multiple-choice fallback option.
+- **Baseline Framework**: Built on a standardized baseline MBTI question dataset (`backend/data/mbti_questions_28.json`).
+- **Question Bounds**:
+  - 28 situational questions covering $E/I$, $S/N$, $T/F$, and $J/P$ dichotomies.
+  - Dynamic sequence (or quick 8–12 question subset for high-speed MVP mode).
+- **Input Options & Guardrails**:
+  - Option 1 (Choice A), Option 2 (Choice B), + optional free-form text context (max 280 chars).
+  - Moderation layer strips prompt injection and profanity.
 
 ### 3.2 Agent 2: Personality & Archetype Synthesizer
-- **Scope**: Evaluates raw multiple-choice + free-form answers.
-- **Mechanism**:
-  - **MBTI Baseline Anchor**: Maps user responses to a core MBTI character archetype foundation (e.g. Commander, Campaigner, Architect, Debater).
-  - **Dynamic Title Generation**: Generates contextual, expressive titles dynamically (e.g., *Main Character*, *Overthinking Wizard*, *Low-Key Legend*).
-  - **Prominent Top Traits**: Highlights 3-4 dominant behavioral badges on the main result card.
-  - **Deep-Dive Analysis Module**: Accessible via expandable view — includes dimensional breakdown (5-model matrix), radar chart values, Strengths/Flaws, and "Appearance vs. Reality" roasted commentary.
+- **Deterministic Baseline**: Computes core MBTI anchor score (`calculate_mbti_type`) using the standard matrix logic:
+  - $E/I$, $S/N$, $T/F$, $J/P$ point totals.
+  - Myers-Briggs official tie-breaker rules (selecting $I$, $N$, $F$, $P$ on exact ties).
+- **Generative Synthesis**: Agent 2 takes the 4-letter baseline anchor (`ENTJ`, `ENFP`, `INTP`) + free-form text input to generate:
+  - **Dynamic Title**: Expressive, unhinged title (e.g., *Main Character*, *Overthinking Wizard*, *Low-Key Legend*).
+  - **Prominent Top Traits**: 3-4 behavioral badge highlights.
+  - **Deep Analysis Breakdown**: 5-model dimensional breakdown, radar graph data, strengths/flaws, and roasted commentary.
 
 ### 3.3 Agent 3: Caricaturized Avatar Generation
-- **Scope**: Generates visual avatars built on a 3-layer composition stack:
-  1. **Layer 1 (MBTI Character Foundation)**: Core visual style of the baseline MBTI archetype character (e.g., *16personalities-inspired Commander/Architect/Campaigner character template*).
-  2. **Layer 2 (Specialized Trait & Title Overlay)**: Modifies outfits, props, and background elements derived from Agent 2's unhinged traits and custom title (e.g., pirate captain hat/ship deck superimposed on a Commander base).
-  3. **Layer 3 (User Likeness Fusion)**: Physical attributes (from selfie photo OR manual skin tone/hair color & length/gender/accessory selectors).
-- **Prompt Conflict Hierarchy**: Physical user likeness overrides conflicting trait props (e.g. specified bald hair overrides wig overlays).
-- **Resilience & Fallback Mechanism**:
-  - Image generation timeout capped at **10 seconds**.
-  - **Graceful Fallback**: If external image API fails or times out, the system automatically renders a high-quality stylized SVG vector avatar derived from the MBTI baseline character.
-  - **Interactive Loader**: Displays live progressive agent status messages during processing (e.g. *"Agent 1 analyzed traits..."* $\rightarrow$ *"Agent 2 assigned 'Captain' title..."* $\rightarrow$ *"Agent 3 rendering avatar..."*).
+- **3-Layer Composition Stack**:
+  1. **Layer 1 (MBTI Base)**: Visual character template mapped from the baseline score (`ENTJ` $\rightarrow$ Commander, `ENFP` $\rightarrow$ Campaigner).
+  2. **Layer 2 (Trait & Title Modifiers)**: Outfits, props, and scene elements derived from Agent 2's unhinged title.
+  3. **Layer 3 (User Likeness)**: Physical attributes (photo upload OR manual skin tone, hair color/length, gender expression, accessories).
+- **Resilience Circuit Breaker**:
+  - 10-second timeout.
+  - Fallback to high-quality stylized SVG vector avatar if external image API times out.
 
 ---
 
@@ -83,18 +83,16 @@ graph LR
 - Privacy & entertainment disclaimer.
 
 ### 4.2 Interactive Test Flow (`/test`)
-- Pagination with progress bar, step transitions, back button, and client-side state persistence (`localStorage`) to prevent progress loss on refresh.
-- Adaptive question cards with choices + free-form text input option (8–12 questions).
-- **Likeness Specification Step**: Choice between photo upload or manual attribute selector (skin color, hair color/style/length, gender expression, accessories).
+- Pagination with progress bar, step transitions, back button, and client-side state persistence (`localStorage`).
+- Questions powered by standard MBTI question dataset with dual choices + optional free-form text.
 
 ### 4.3 Results & Archetype Hub (`/result/[sessionId]`)
-- **Public Permalinks**: Fully server-rendered permalinks allowing direct social sharing.
-- **Main View**: Top-level Title, Caricaturized Avatar Poster (MBTI Base + Custom Trait Layer + User Likeness), 3-4 Prominent Trait Badges, and One-Click Social Share CTA ($9:16$ Story Card).
-- **Deep Analysis View**: Expandable radar graph, strengths/flaws, cross-MBTI mapping, and roasted personality summary.
+- Server-rendered public permalink.
+- Main view displaying MBTI baseline anchor, unhinged custom title, caricaturized avatar poster, 3-4 trait badges, and $9:16$ story poster exporter.
 
 ---
 
 ## 5. Non-Functional Requirements
-- **Performance**: Quiz transitions < 200ms; Agent synthesis < 3s; Avatar generation < 10s with interactive loader; SVG fallback trigger at 10.1s.
+- **Performance**: Quiz step transition < 200ms; Deterministic MBTI calculation < 1ms; LLM synthesis < 3s; Avatar generation < 10s.
 - **State Persistence**: Client state synced to backend database for public permalinks (`/result/[sessionId]`).
-- **Privacy & Safety**: Client photos stored transiently and processed securely. Manual attribute picking available for 100% photo-free privacy. Input sanitization prevents prompt injection attacks.
+- **Privacy & Safety**: Client photos stored transiently and processed securely. Manual attribute picking available for 100% photo-free privacy. Input sanitization prevents prompt injection.
