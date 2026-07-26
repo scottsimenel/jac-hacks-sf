@@ -41,6 +41,7 @@ def:pub app -> JsxElement {
     async def selectChoiceA -> None;
     async def selectChoiceB -> None;
     async def updateFreeform(e: ChangeEvent) -> None;
+    async def handleInputKeyDown(e: KeyboardEvent) -> None;
     async def updateSkin(e: ChangeEvent) -> None;
     async def updateHair(e: ChangeEvent) -> None;
     async def updateGender(e: ChangeEvent) -> None;
@@ -98,6 +99,8 @@ def:pub app -> JsxElement {
                 onSelectA={selectChoiceA}
                 onSelectB={selectChoiceB}
                 onTextChange={updateFreeform}
+                onKeyDownInput={handleInputKeyDown}
+                onPrevQ={prevQuestion}
             />;
         } elif step == "likeness" {
             return <LikenessModal

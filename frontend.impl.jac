@@ -43,6 +43,13 @@ impl app.updateFreeform(e: ChangeEvent) -> None {
     freeform_input = e.target.value;
 }
 
+impl app.handleInputKeyDown(e: KeyboardEvent) -> None {
+    if e.key == "Enter" {
+        e.preventDefault();
+        selectChoiceA();
+    }
+}
+
 impl app.updateSkin(e: ChangeEvent) -> None {
     skin_tone = e.target.value;
 }
@@ -73,7 +80,8 @@ impl app.submitLikeness -> None {
         hair_color=hair_color,
         hair_style=hair_style,
         gender_expression=gender_expression,
-        accessories=accessories
+        accessories=accessories,
+        answers_json=json.dumps(user_answers)
     );
 
     if len(res.reports) > 0 {
