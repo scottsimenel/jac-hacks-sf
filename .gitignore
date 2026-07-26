@@ -1,3 +1,8 @@
+# Secrets & Environment Variables
+.env
+.env.local
+.env.*
+
 # Environment & Dependencies
 .venv/
 node_modules/
@@ -15,4 +20,3 @@ build/
 .idea/
 .DS_Store
 *.log
-.DS_Store

@@ -4,6 +4,7 @@ Server-Side Data Layer & Multi-Agent API Endpoints (100% Jac Native)
 """
 
 import from backend.jac.mbti_calculator { calculate_mbti_type }
+import from backend.jac.llm_client { synthesize_unhinged_profile }
 import json;
 
 node UserSession {
@@ -137,23 +138,31 @@ walker:pub SubmitLikeness {
         mbti_res = calculate_mbti_type(raw_ans) if len(raw_ans) > 0 else {"type": "ENTP", "scores": {}};
         mbti_code = mbti_res.get("type", "ENTP");
 
-        synth = self.build_fallback(mbti_code);
+        # Extract freeform comments
+        freeform_comments = [
+            a.get("freeform_text") for a in raw_ans 
+            if isinstance(a, dict) and a.get("freeform_text", "").strip()
+        ];
+
+        # Execute Live Groq LLM synthesis with automatic fallback
+        llm_res = synthesize_unhinged_profile(mbti_code, freeform_comments);
+        synth = llm_res if llm_res else self.build_fallback(mbti_code);
 
         archetype = TraitArchetype(
             mbti_anchor=mbti_code,
-            unhinged_title=synth["unhinged_title"],
-            summary_quote=synth["summary_quote"],
-            top_traits=synth["top_traits"],
-            appearance_text=synth["appearance"],
-            reality_text=synth["reality"],
-            strengths=synth["strengths"],
-            flaws=synth["flaws"],
-            radar_self=synth["radar_self"],
-            radar_emotion=synth["radar_emotion"],
-            radar_attitude=synth["radar_attitude"],
-            radar_action=synth["radar_action"],
-            radar_social=synth["radar_social"],
-            visual_keywords=synth["keywords"]
+            unhinged_title=synth.get("unhinged_title", f"Captain of {mbti_code}"),
+            summary_quote=synth.get("summary_quote", "Uncannily accurate chaos."),
+            top_traits=synth.get("top_traits", ["Chaos Orchestrator"]),
+            appearance_text=synth.get("appearance", f"Composed {mbti_code} visionary"),
+            reality_text=synth.get("reality", "Unhinged caffeine energy"),
+            strengths=synth.get("strengths", ["Idea Generation"]),
+            flaws=synth.get("flaws", ["Zero Finishing Ability"]),
+            radar_self=synth.get("radar_self", 80),
+            radar_emotion=synth.get("radar_emotion", 65),
+            radar_attitude=synth.get("radar_attitude", 85),
+            radar_action=synth.get("radar_action", 90),
+            radar_social=synth.get("radar_social", 75),
+            visual_keywords=synth.get("visual_keywords", ["pirate hat", "blueprints"])
         );
         here ++> archetype;
         report archetype;
