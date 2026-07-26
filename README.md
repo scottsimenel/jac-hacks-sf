@@ -6,6 +6,7 @@ An internet-native, multi-agentic web application built with **Jac** that quizze
 
 - [Product Requirements Document (PRD)](./docs/PRD.md)
 - [High-Level System Design Document](./docs/SYSTEM_DESIGN.md)
+- [App Development Strategy & Implementation Roadmap](./docs/DEVELOPMENT_STRATEGY.md)
 
 ## Multi-Agent Architecture (Jac)
 
