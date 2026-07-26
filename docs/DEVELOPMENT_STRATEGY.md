@@ -12,7 +12,7 @@ This document outlines the step-by-step strategy for executing the **Hyper-Perso
 graph TD
     P0[Phase 0: JacHammer Setup & Tech Spikes] --> P1[Phase 1: Foundation & Contracts]
     P1 --> P2[Phase 2: Jac Multi-Agent Core & Image Pipeline]
-    P2 --> P3[Phase 3: Frontend & Virality Engine]
+    P2 --> P3[Phase 3: Frontend & Post-Quiz Likeness Collection]
     P3 --> P4[Phase 4: E2E Integration & Performance Tuning]
     P4 --> P5[Phase 5: JacHammer Cloud Deployment & Growth Iteration]
 ```
@@ -29,6 +29,7 @@ graph TD
    - Finalized `PRD.md` and `SYSTEM_DESIGN.md` payload contracts.
    - Defined exact schemas for `UserSessionNode`, `QuestionNode`, `TraitArchetypeNode`, `DeepAnalysisNode`, and `AvatarArtifactNode`.
    - Integrated 28-question baseline dataset (`mbti_questions_28.json`) and scoring calculator (`mbti_calculator.py`).
+   - Modified CUJ funnel: Quiz starts immediately; Avatar Likeness Collection occurs **after quiz completion**.
 3. **Tech Spike — Avatar Generation & SVG Fallback Adapter**:
    - Test image generation endpoints (Replicate / Fal.ai / FLUX / InstantID).
    - Verify 10-second timeout circuit breaker and test SVG vector fallback rendering.
@@ -39,8 +40,9 @@ graph TD
 **Goal**: Establish solid contracts between JacHammer backend cloud and Next.js frontend client.
 
 1. **Interface Specifications (JacHammer REST API)**:
-   - `POST /api/session/init`: Initializes session & returns Q1.
+   - `POST /api/session/init`: Initializes session & returns Q1 (zero upfront photo required).
    - `POST /api/quiz/answer`: Submits choice/freeform text & returns Q2–Q12.
+   - `POST /api/session/likeness`: Submits post-quiz photo upload or manual attributes & triggers Agent 3.
    - `GET /api/quiz/result/[sessionId]`: Fetches permalink payload (archetype title, radar data, avatar image URL, fallback status).
    - `POST /api/avatar/re-roll`: Re-rolls avatar with style preset.
 2. **Shared Data Models / Types**:
@@ -58,7 +60,7 @@ graph TD
 2. **Workstream 2.2 — Multi-Agent Walker Development**:
    - **`IntakeWalker` (Agent 1)**: Traversal with 28 situational questions and input moderation guardrails.
    - **`TraitWalker` (Agent 2)**: Deterministic MBTI calculation + LLM synthesis of unhinged title, badge highlights, and deep analysis payload.
-   - **`AvatarWalker` (Agent 3)**: 3-layer prompt synthesis (MBTI character base + specialized trait overlay + likeness payload).
+   - **`AvatarWalker` (Agent 3)**: 3-layer prompt synthesis (MBTI character base + specialized trait overlay + post-quiz likeness payload).
 3. **Workstream 2.3 — Image Adapter & Circuit Breaker**:
    - Implement pluggable adapter module for Replicate / Fal.ai with 10s timeout, retry logic, watermark application, and SVG vector fallback.
 
@@ -69,8 +71,8 @@ graph TD
 
 1. **Workstream 3.1 — Core User Journey (`/` & `/test`)**:
    - **Landing Page (`/`)**: Hero section, dynamic avatar preview carousel, CTA, privacy notice.
-   - **Quiz Engine (`/test`)**: Smooth step transitions, progress bar, choice selector, free-form text input (max 280 chars), client state persistence (`localStorage`).
-   - **Likeness Step**: Dual toggle between Photo Upload (with crop/preview) and Manual Attribute Selectors (skin tone, hair style/color, accessories).
+   - **Quiz Engine (`/test` Step 1)**: Instant start, smooth step transitions, progress bar, choice selector, free-form text input (max 280 chars), client state persistence (`localStorage`).
+   - **Avatar Personalization (`/test` Step 2 - Post-Quiz)**: Occurs after final question. Choice between Photo Upload (with crop/preview) and Manual Attribute Selectors (skin tone, hair style/color, accessories).
 2. **Workstream 3.2 — Results & Archetype Hub (`/result/[sessionId]`)**:
    - **Public Permalinks**: Server-rendered result pages accessible directly via shared URL.
    - **Primary Poster**: Caricaturized avatar display (or SVG fallback), unhinged title, top 3-4 trait badges.
@@ -86,7 +88,7 @@ graph TD
 **Goal**: Ensure end-to-end reliability, sub-second client responsiveness, and fault tolerance.
 
 1. **End-to-End Flow Verification**:
-   - Comprehensive testing from landing page through quiz intake, walker processing, avatar rendering, and share card export.
+   - Comprehensive testing from landing page through quiz intake, post-quiz likeness collection, walker processing, avatar rendering, and share card export.
 2. **Performance Optimization**:
    - Target NFR checks: Quiz steps < 200ms transition; `TraitWalker` synthesis < 3s; Avatar rendering < 10s with dynamic interactive loader; SVG fallback trigger at 10.1s.
 3. **Resilience & Fallbacks**:
