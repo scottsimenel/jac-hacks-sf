@@ -11,8 +11,9 @@
 ### 2.1 Short-Term Strategy (MVP & Growth Baseline)
 - **Primary Goal**: Rapid viral adoption ($K\text{-factor} > 1.2$) and high completion rates ($> 85\%$).
 - **Virality Hooks (Built into MVP)**:
+  - **Public Permalinks (`/result/[sessionId]`)**: Unique URL created for every completed session, allowing friends and social visitors to view shared results without requiring local browser state.
   - **Story-Ready $9:16$ Share Poster**: Instant creation of aesthetic vertical cards for Instagram/TikTok stories, featuring the caricaturized avatar, top title, and badge highlights.
-  - **Dynamic OpenGraph (OG) Links**: Generated preview cards when sharing links on iMessage, Twitter/X, and WhatsApp.
+  - **Dynamic OpenGraph (OG) Links**: Server-rendered preview cards for links posted on iMessage, Twitter/X, and WhatsApp.
   - **Watermarked Free Avatars & Direct Referral Links**: Native web share triggers pointing back to the test with custom referral parameters.
 - **Mocked/Early Monetization Hooks**:
   - UI placeholders for "HD Watermark Removal", "Avatar Style Packs", and "Deep Compatibility Check".
@@ -33,18 +34,26 @@
 
 ```mermaid
 graph LR
-    User[User Session & Photo / Attribute Input] --> Agent1[Agent 1: Dynamic Question & Intake]
+    User[User Session & Photo / Attribute Input] --> Sanitize[Input Moderation & Guardrails]
+    Sanitize --> Agent1[Agent 1: Dynamic Question & Intake]
     Agent1 -->|Answers & Free-form Input| Agent2[Agent 2: Trait & Title Synthesizer]
     Agent2 -->|Top Traits, MBTI Anchor & Title| Deep[Deep Analysis Engine]
-    Agent2 -->|MBTI Base + Trait Modifiers + Likeness| Agent3[Agent 3: Caricature Avatar Generator]
-    Agent3 --> Card[Shareable Profile Card & Avatar Hub]
+    Agent2 -->|3-Layer Prompt Payload| Agent3[Agent 3: Caricature Avatar Generator]
+    Agent3 --> Fallback{Image Gen Status}
+    Fallback -->|Success| Poster[Rendered Avatar Poster]
+    Fallback -->|Timeout / Error| SVG[Stylized SVG MBTI Fallback]
+    Poster --> Card[Public Profile Card & Permalink Hub]
+    SVG --> Card
 ```
 
 ### 3.1 Agent 1: Dynamic Question Intake Engine
 - **Scope**: Evaluates holistic behavioral dimensions (Self, Emotion, Attitude, Action, Social) anchored on MBTI/Big-Five principles.
-- **Mechanism**:
-  - Tailors subsequent questions dynamically based on prior choices.
-  - Supports structured **Multiple-Choice** options with an optional **Free-Form Input field** for custom user responses.
+- **Question Bounds & Termination Matrix**:
+  - **Hard Limits**: Minimum **8 questions**, Maximum **12 questions**.
+  - **Early Stop Rule**: Session terminates early (at Q8–Q10) if trait confidence matrix achieves $> 85\%$ variance separation.
+- **Input Types & Moderation Guardrails**:
+  - Multiple-choice options + optional free-form text input (max 280 characters).
+  - **Moderation Layer**: Input sanitization strips prompt injection patterns and profane content. Toxic free-form inputs gracefully default to closest multiple-choice fallback option.
 
 ### 3.2 Agent 2: Personality & Archetype Synthesizer
 - **Scope**: Evaluates raw multiple-choice + free-form answers.
@@ -56,14 +65,14 @@ graph LR
 
 ### 3.3 Agent 3: Caricaturized Avatar Generation
 - **Scope**: Generates visual avatars built on a 3-layer composition stack:
-  1. **Core MBTI Character Base**: Grounded fundamentally in iconic MBTI character visual themes (e.g. Commander outfit, Campaigner palette, Architect gear).
-  2. **Specialized Trait & Title Customizations**: Layered caricaturized modifications derived from Agent 2's unhinged traits and custom title (e.g., pirate captain hat/ship deck superimposed on a Commander base).
-  3. **Personalized Likeness Features**: Fused with user physical traits captured via:
-     - **Option A (Photo Upload)**: Selfie/photo for direct facial feature extraction and image-to-image/ControlNet reference.
-     - **Option B (Manual Likeness Picker)**: UI selectors for skin tone, hair color/style/length, gender expression, and accessories.
-- **Generation Output**:
-  - Cost-effective, fast MVP image generation backend abstraction (e.g. Replicate / Fal.ai / FLUX / SDXL).
-  - Avatar re-roll requests preserving the MBTI base + user likeness structure.
+  1. **Layer 1 (MBTI Character Foundation)**: Core visual style of the baseline MBTI archetype character (e.g., *16personalities-inspired Commander/Architect/Campaigner character template*).
+  2. **Layer 2 (Specialized Trait & Title Overlay)**: Modifies outfits, props, and background elements derived from Agent 2's unhinged traits and custom title (e.g., pirate captain hat/ship deck superimposed on a Commander base).
+  3. **Layer 3 (User Likeness Fusion)**: Physical attributes (from selfie photo OR manual skin tone/hair color & length/gender/accessory selectors).
+- **Prompt Conflict Hierarchy**: Physical user likeness overrides conflicting trait props (e.g. specified bald hair overrides wig overlays).
+- **Resilience & Fallback Mechanism**:
+  - Image generation timeout capped at **10 seconds**.
+  - **Graceful Fallback**: If external image API fails or times out, the system automatically renders a high-quality stylized SVG vector avatar derived from the MBTI baseline character.
+  - **Interactive Loader**: Displays live progressive agent status messages during processing (e.g. *"Agent 1 analyzed traits..."* $\rightarrow$ *"Agent 2 assigned 'Captain' title..."* $\rightarrow$ *"Agent 3 rendering avatar..."*).
 
 ---
 
@@ -75,16 +84,17 @@ graph LR
 
 ### 4.2 Interactive Test Flow (`/test`)
 - Pagination with progress bar, step transitions, back button, and client-side state persistence (`localStorage`) to prevent progress loss on refresh.
-- Adaptive question cards with choices + free-form text input option.
+- Adaptive question cards with choices + free-form text input option (8–12 questions).
 - **Likeness Specification Step**: Choice between photo upload or manual attribute selector (skin color, hair color/style/length, gender expression, accessories).
 
-### 4.3 Results & Archetype Hub (`/result`)
+### 4.3 Results & Archetype Hub (`/result/[sessionId]`)
+- **Public Permalinks**: Fully server-rendered permalinks allowing direct social sharing.
 - **Main View**: Top-level Title, Caricaturized Avatar Poster (MBTI Base + Custom Trait Layer + User Likeness), 3-4 Prominent Trait Badges, and One-Click Social Share CTA ($9:16$ Story Card).
 - **Deep Analysis View**: Expandable radar graph, strengths/flaws, cross-MBTI mapping, and roasted personality summary.
 
 ---
 
 ## 5. Non-Functional Requirements
-- **Performance**: Quiz transitions < 200ms; Agent synthesis < 3s; Avatar generation < 10s with interactive loader.
-- **State Persistence**: User progress saved continuously in browser state.
-- **Privacy & Safety**: Client photos stored transiently and processed securely. Manual attribute picking available for 100% photo-free privacy.
+- **Performance**: Quiz transitions < 200ms; Agent synthesis < 3s; Avatar generation < 10s with interactive loader; SVG fallback trigger at 10.1s.
+- **State Persistence**: Client state synced to backend database for public permalinks (`/result/[sessionId]`).
+- **Privacy & Safety**: Client photos stored transiently and processed securely. Manual attribute picking available for 100% photo-free privacy. Input sanitization prevents prompt injection attacks.
