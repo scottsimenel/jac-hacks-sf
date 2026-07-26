@@ -1,4 +1,17 @@
-.jac/
+# Environment & Dependencies
+.venv/
 node_modules/
+__pycache__/
+*.pyc
+
+# Jac & Build Artifacts
+.jac/
+dist/
+build/
+.staging/
+
+# IDE & OS
 .vscode/
 .idea/
+.DS_Store
+*.log
