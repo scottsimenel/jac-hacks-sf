@@ -3,7 +3,7 @@ Hyper-Personalized Personality & Caricature Avatar Generator
 Server-Side Data Layer & Multi-Agent API Endpoints
 """
 
-import mbti_calculator;
+import from backend.jac.mbti_calculator { calculate_mbti_type }
 import json;
 
 node UserSession {
@@ -112,7 +112,7 @@ walker:pub SubmitLikeness {
 
     can process_likeness with Root entry {
         raw_ans = json.loads(self.answers_json) if self.answers_json else [];
-        mbti_res = mbti_calculator.calculate_mbti_type(raw_ans) if len(raw_ans) > 0 else {"type": "ENTP", "scores": {}};
+        mbti_res = calculate_mbti_type(raw_ans) if len(raw_ans) > 0 else {"type": "ENTP", "scores": {}};
         mbti_code = mbti_res.get("type", "ENTP");
 
         title_prefix = "Captain of " if mbti_code.startswith("E") else "Mastermind of ";
