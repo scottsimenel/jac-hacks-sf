@@ -24,7 +24,8 @@ def:pub ResultScreen(
                     "background": "#161b26",
                     "borderRadius": "24px",
                     "padding": "2.5rem",
-                    "border": "1px solid rgba(255, 255, 255, 0.1)"
+                    "border": "1px solid rgba(255, 255, 255, 0.1)",
+                    "boxShadow": "0 25px 50px -12px rgba(0, 0, 0, 0.7)"
                 }}
             >
                 <div style={{"textAlign": "center", "marginBottom": "2rem"}}>
@@ -124,6 +125,20 @@ def:pub ResultScreen(
                     <h3 style={{"fontSize": "1.2rem", "fontWeight": "700", "color": "#c084fc", "marginBottom": "1rem"}}>Appearance vs. Reality</h3>
                     <p style={{"color": "#cbd5e1", "marginBottom": "0.5rem"}}><strong>Appearance:</strong> {appearance}</p>
                     <p style={{"color": "#cbd5e1", "marginBottom": "1.5rem"}}><strong>Reality:</strong> {reality}</p>
+
+                    <h4 style={{"color": "#818cf8", "marginBottom": "0.75rem"}}>Synthesized Behavioral Profile</h4>
+                    <div style={{"display": "grid", "gridTemplateColumns": "1fr 1fr", "gap": "1rem"}}>
+                        <div>
+                            <h5 style={{"color": "#4ade80", "marginBottom": "0.4rem"}}>Unfiltered Strengths</h5>
+                            <p style={{"color": "#94a3b8", "fontSize": "0.85rem", "margin": "0.2rem 0"}}>⚡ High Vibe Energy & Idea Generation</p>
+                            <p style={{"color": "#94a3b8", "fontSize": "0.85rem", "margin": "0.2rem 0"}}>⚡ Rapid Adaptability in Chaos</p>
+                        </div>
+                        <div>
+                            <h5 style={{"color": "#f87171", "marginBottom": "0.4rem"}}>Unfiltered Cautions</h5>
+                            <p style={{"color": "#94a3b8", "fontSize": "0.85rem", "margin": "0.2rem 0"}}>⚠️ Zero Finishing Ability</p>
+                            <p style={{"color": "#94a3b8", "fontSize": "0.85rem", "margin": "0.2rem 0"}}>⚠️ 2 AM Overthinking Spiral</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>;

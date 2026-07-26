@@ -38,13 +38,20 @@ node AnswerNode {
 }
 
 node TraitArchetypeNode {
-    has mbti_anchor: str = ""; # e.g. "ENTJ"
-    has unhinged_title: str = ""; # e.g. "Captain"
+    has mbti_anchor: str = ""; # e.g. "ENTP"
+    has unhinged_title: str = ""; # e.g. "Captain of ENTP Chaos"
+    has summary_quote: str = "";
     has top_traits: list[str] = []; # e.g. ["Chaos Orchestrator", "Hyper-Focused"]
-    has appearance_vs_reality: str = "";
+    has appearance_text: str = "";
+    has reality_text: str = "";
     has strengths: list[str] = [];
     has flaws: list[str] = [];
-    has radar_scores: dict[str, int] = {};
+    has radar_self: int = 75;
+    has radar_emotion: int = 60;
+    has radar_attitude: int = 85;
+    has radar_action: int = 90;
+    has radar_social: int = 80;
+    has visual_keywords: list[str] = [];
 }
 
 node AvatarArtifactNode {
@@ -84,11 +91,33 @@ walker TraitWalker {
 
     can synthesize_traits with UserSessionNode entry {
         mbti_result = mbti_calculator.calculate_mbti_type(self.raw_answers);
-        mbti_code = mbti_result["type"];
-        scores = mbti_result["scores"];
+        mbti_code = mbti_result.get("type", "ENTP");
+        scores = mbti_result.get("scores", {});
+
+        title_prefix = "Captain of " if mbti_code.startswith("E") else "Mastermind of ";
+        title = title_prefix + mbti_code + " Chaos";
+
+        archetype = TraitArchetypeNode(
+            mbti_anchor=mbti_code,
+            unhinged_title=title,
+            summary_quote="Zero science, 100% uncannily accurate chaos.",
+            top_traits=["Chaos Orchestrator", "Paper-Thin Confidence", "Left-on-Read Survivor", "Hyper-Focused Deep Diver"],
+            appearance_text=f"Others see a composed {mbti_code} visionary.",
+            reality_text="Inside is pure unhinged caffeine energy and 3 AM overthinking.",
+            strengths=["Infinite Idea Generation", "Unmatched Crisis Adaptability", "High Vibe Energy"],
+            flaws=["Zero Finishing Ability", "Selective Hearing", "Overthinking 2 AM Texts"],
+            radar_self=82,
+            radar_emotion=65,
+            radar_attitude=88,
+            radar_action=92,
+            radar_social=78,
+            visual_keywords=["pirate hat", "glowing blueprints", "caffeine mug"]
+        );
+        here ++> archetype;
 
         print(f"[Agent 2: TraitWalker] Calculated Baseline MBTI Anchor: {mbti_code}");
         print(f"[Agent 2: TraitWalker] Dimension Point Breakdown: {scores}");
+        print(f"[Agent 2: TraitWalker] Synthesized Archetype Node: '{title}'");
     }
 }
 
@@ -118,7 +147,6 @@ with entry {
     print("Jac Multi-Agent Core Engine & Nodes Initialized.");
     print("=================================================");
 
-    # Test Session Graph Creation
     session = UserSessionNode(
         session_id="test-session-001",
         created_at="2026-07-26",
@@ -126,7 +154,6 @@ with entry {
         hair_color="dark brown"
     );
 
-    # Test Sample Answers (ENTP profile)
     sample_answers = [
         {"dimension": "EI", "choice": 1},
         {"dimension": "SN", "choice": 2},
@@ -134,12 +161,11 @@ with entry {
         {"dimension": "JP", "choice": 2}
     ];
 
-    # Test Agent Execution
     IntakeWalker(current_question_id=1) spawn session;
     TraitWalker(raw_answers=sample_answers) spawn session;
     AvatarWalker(
         mbti_anchor="ENTP",
-        unhinged_title="Captain of Chaos",
+        unhinged_title="Captain of ENTP Chaos",
         likeness_payload={"skin_tone": "olive", "hair_color": "dark brown"}
     ) spawn session;
 }
