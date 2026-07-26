@@ -15,10 +15,10 @@ graph TD
         QGraph -->|Collects MC + Free-form Answers| AnsNode[AnswerHistoryNode]
         
         AnsNode -->|Walker: TraitWalker| Synthesizer[LLM Trait & Title Agent]
-        Synthesizer --> TraitNode[Trait & Archetype Node]
+        Synthesizer --> TraitNode[Trait, MBTI Base & Title Node]
         Synthesizer --> DeepNode[Deep Analysis Node]
         
-        TraitNode -->|Walker: AvatarWalker| PromptEngine[Likeness + Caricature Prompt Crafter]
+        TraitNode -->|Walker: AvatarWalker| PromptEngine[3-Layer Avatar Prompt Crafter]
         PromptEngine --> ImageAdapter[Image Gen API Adapter (Replicate/Fal/FLUX)]
     end
     
@@ -34,20 +34,23 @@ graph TD
 - `UserSessionNode`: Stores session token, completion state, current node pointer, and **Likeness Payload** (`photo_url: Option<String>` OR `manual_attributes: { skin_tone, hair_color, hair_length_style, gender_expression, accessories }`).
 - `QuestionNode`: Stores static/dynamic question text, category model (Self, Emotion, Attitude, Action, Social), pre-set choice options, and adaptive branch pointers.
 - `AnswerNode`: Captures user's selected choice and/or free-form text input.
-- `TraitArchetypeNode`: Stores dynamically generated title (e.g. *Main Character*, *Low-Key Legend*), top 3-4 trait badges, and color theme metadata.
+- `TraitArchetypeNode`: Stores **MBTI Base Archetype** (e.g. Commander, Campaigner, Architect), dynamically generated title (e.g. *Main Character*, *Low-Key Legend*), top 3-4 trait badges, and color theme metadata.
 - `DeepAnalysisNode`: Stores 15-dimension raw scores, radar chart matrix data, strengths, flaws, and "Appearance vs. Reality" breakdown.
-- `AvatarArtifactNode`: Stores prompt logs, seed, generation provider status, watermark status, and final rendered image URLs (1:1 aspect ratio and 9:16 story format).
+- `AvatarArtifactNode`: Stores 3-layer prompt logs, seed, generation provider status, watermark status, and final rendered image URLs (1:1 aspect ratio and 9:16 story format).
 
 ### 2.2 Core Walkers (Jac Agents)
 - `IntakeWalker`: Navigates the `QuestionNode` graph. Analyzes incoming answer state to select or dynamically spawn follow-up `QuestionNode`s tailored to previous responses.
-- `TraitWalker`: Runs generative abilities over `AnswerNode` history. Computes score dimensions, generates the custom unhinged title, top trait badges, and deep analysis payload.
-- `AvatarWalker`: Fuses visual likeness markers (either extracted from user photo OR parsed from manual attribute selectors like skin color, hair type, and gender) with `TraitArchetypeNode` traits into a structured prompt, dispatching calls to the abstracted image service adapter.
+- `TraitWalker`: Runs generative abilities over `AnswerNode` history. Computes MBTI baseline anchor, score dimensions, custom title, top trait badges, and deep analysis payload.
+- `AvatarWalker`: Constructs a **3-Layer Generative Prompt**:
+  1. **Layer 1 (MBTI Character Foundation)**: Core visual style of the baseline MBTI archetype character (e.g., *16personalities-inspired Commander/Architect/Campaigner character template*).
+  2. **Layer 2 (Specialized Trait & Title Overlay)**: Modifies outfits, props, and background elements derived from the user's specific unhinged traits and dynamic title.
+  3. **Layer 3 (User Likeness Fusion)**: Integrates physical features (from user photo reference OR manual skin/hair/gender/accessory selectors).
 
 ---
 
 ## 3. Image Generation Backend Abstraction Layer
 To ensure low cost and easy MVP setup, the avatar generation is decoupled via an adapter interface:
-- **Adapter Interface**: `generate_caricature(likeness_input: LikenessData, prompt: str, style_preset: str) -> str`
+- **Adapter Interface**: `generate_caricature(mbti_base: str, trait_modifiers: List[str], likeness_input: LikenessData) -> str`
 - **Supported Providers (Pluggable)**:
   - **Option A (MVP Recommended)**: Replicate API (FLUX.1 / InstantID / PuLID for photo face preservation OR text-conditioned FLUX for manual attribute prompts).
   - **Option B**: Fal.ai (Fast SDXL InstantID endpoints).
@@ -66,7 +69,7 @@ To ensure low cost and easy MVP setup, the avatar generation is decoupled via an
 1. **Workstream 1: Jac Core & Multi-Agent Graph (`backend/jac/`)**
    - Implement nodes, edges, and walkers (`IntakeWalker`, `TraitWalker`, `AvatarWalker`).
    - Implement dynamic question generation logic using Jac's LLM capabilities.
-2. **Workstream 2: Image Adapter & Avatar Prompting (`backend/services/avatar/`)**
-   - Build pluggable image generation client with face preservation + attribute-based caricature styling.
+2. **Workstream 2: Image Adapter & 3-Layer Avatar Prompting (`backend/services/avatar/`)**
+   - Build pluggable image generation client with MBTI character baseline + trait overlay + face preservation/attribute styling.
 3. **Workstream 3: Next.js Frontend & Social Sharing (`frontend/`)**
    - Build quiz interface (multiple choice + freeform text), likeness picker (photo vs attributes), progress tracking, results hub, deep analysis drawer, and 9:16 story card generator.

@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary & Product Vision
 - **Project Name**: Hyper-Personalized Personality & Caricature Avatar Generator *(Working Title)*
-- **Core Vision**: An internet-native, multi-agentic entertainment & self-discovery web application. Going far beyond traditional static 4-letter MBTI tests, it combines adaptive AI questioning with dynamic personality trait synthesis, unhinged/expressive custom titles (e.g., *Captain*, *Low-Key Legend*, *Chaos Orchestrator*), and AI-generated caricaturized avatars blending the user's likeness with their personality archetype.
+- **Core Vision**: An internet-native, multi-agentic entertainment & self-discovery web application. Going far beyond traditional static 4-letter MBTI tests, it combines adaptive AI questioning with dynamic personality trait synthesis, unhinged/expressive custom titles (e.g., *Captain*, *Low-Key Legend*, *Chaos Orchestrator*), and AI-generated caricaturized avatars blending MBTI baseline character archetypes, specialized traits, and user likeness.
 
 ---
 
@@ -35,8 +35,8 @@
 graph LR
     User[User Session & Photo / Attribute Input] --> Agent1[Agent 1: Dynamic Question & Intake]
     Agent1 -->|Answers & Free-form Input| Agent2[Agent 2: Trait & Title Synthesizer]
-    Agent2 -->|Top Traits & Unhinged Title| Deep[Deep Analysis Engine]
-    Agent2 -->|Archetype Prompt & Likeness Params| Agent3[Agent 3: Caricature Avatar Generator]
+    Agent2 -->|Top Traits, MBTI Anchor & Title| Deep[Deep Analysis Engine]
+    Agent2 -->|MBTI Base + Trait Modifiers + Likeness| Agent3[Agent 3: Caricature Avatar Generator]
     Agent3 --> Card[Shareable Profile Card & Avatar Hub]
 ```
 
@@ -49,23 +49,21 @@ graph LR
 ### 3.2 Agent 2: Personality & Archetype Synthesizer
 - **Scope**: Evaluates raw multiple-choice + free-form answers.
 - **Mechanism**:
+  - **MBTI Baseline Anchor**: Maps user responses to a core MBTI character archetype foundation (e.g. Commander, Campaigner, Architect, Debater).
   - **Dynamic Title Generation**: Generates contextual, expressive titles dynamically (e.g., *Main Character*, *Overthinking Wizard*, *Low-Key Legend*).
   - **Prominent Top Traits**: Highlights 3-4 dominant behavioral badges on the main result card.
   - **Deep-Dive Analysis Module**: Accessible via expandable view — includes dimensional breakdown (5-model matrix), radar chart values, Strengths/Flaws, and "Appearance vs. Reality" roasted commentary.
 
 ### 3.3 Agent 3: Caricaturized Avatar Generation
-- **Scope**: Combines user likeness specification with synthesized archetype themes.
-- **Multi-Modal Likeness Capture Mechanism**:
-  - **Option A (Photo Upload)**: User uploads a selfie/photo for direct facial feature extraction and image-to-image/ControlNet reference.
-  - **Option B (Manual Likeness Picker / Fallback)**: For privacy-conscious or camera-shy users, allow specifying physical attributes via UI selectors:
-    - **Skin Tone / Complexion**
-    - **Hair Color, Style & Length** (e.g. curly long brown hair, bald, short blonde crop)
-    - **Gender / Expression Presentation**
-    - **Accessories / Facial Features** (glasses, beard, hat, etc.)
+- **Scope**: Generates visual avatars built on a 3-layer composition stack:
+  1. **Core MBTI Character Base**: Grounded fundamentally in iconic MBTI character visual themes (e.g. Commander outfit, Campaigner palette, Architect gear).
+  2. **Specialized Trait & Title Customizations**: Layered caricaturized modifications derived from Agent 2's unhinged traits and custom title (e.g., pirate captain hat/ship deck superimposed on a Commander base).
+  3. **Personalized Likeness Features**: Fused with user physical traits captured via:
+     - **Option A (Photo Upload)**: Selfie/photo for direct facial feature extraction and image-to-image/ControlNet reference.
+     - **Option B (Manual Likeness Picker)**: UI selectors for skin tone, hair color/style/length, gender expression, and accessories.
 - **Generation Output**:
   - Cost-effective, fast MVP image generation backend abstraction (e.g. Replicate / Fal.ai / FLUX / SDXL).
-  - Generates caricaturized imagery (e.g., *Captain* title yields pirate captain directing a crew with user's specified facial/attribute likeness).
-  - Supports avatar re-roll requests.
+  - Avatar re-roll requests preserving the MBTI base + user likeness structure.
 
 ---
 
@@ -81,7 +79,7 @@ graph LR
 - **Likeness Specification Step**: Choice between photo upload or manual attribute selector (skin color, hair color/style/length, gender expression, accessories).
 
 ### 4.3 Results & Archetype Hub (`/result`)
-- **Main View**: Top-level Title, Caricaturized Avatar Poster, 3-4 Prominent Trait Badges, and One-Click Social Share CTA ($9:16$ Story Card).
+- **Main View**: Top-level Title, Caricaturized Avatar Poster (MBTI Base + Custom Trait Layer + User Likeness), 3-4 Prominent Trait Badges, and One-Click Social Share CTA ($9:16$ Story Card).
 - **Deep Analysis View**: Expandable radar graph, strengths/flaws, cross-MBTI mapping, and roasted personality summary.
 
 ---
