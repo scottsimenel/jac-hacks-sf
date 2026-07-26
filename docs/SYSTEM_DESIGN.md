@@ -1,16 +1,18 @@
 # High-Level System Design Document
 
-## 1. Architecture Overview & Jac Prominence
+## 1. Architecture Overview & Jac Prominence (JacHammer Ecosystem)
 
-The system is built with **Jac** as the core backend and multi-agent execution orchestrator. Jac manages the entire stateful graph: user sessions, adaptive question trees, deterministic MBTI scoring, personality synthesis walkers, deep analysis generation, and avatar prompt assembly.
+The system is built with **Jac** as the core backend and multi-agent execution orchestrator, hosted, managed, and deployed via **JacHammer** ([https://jachammer.ai/](https://jachammer.ai/)). 
+
+JacHammer acts as the cloud execution engine, managing stateful graphs, Jac agent walkers, database persistence, and BYOM / LLM model routing.
 
 ```mermaid
 graph TD
     Client[Next.js Client Web App] -->|REST API / WebSockets| APIGateway[Next.js API Gateway / Proxy]
-    APIGateway -->|Jac Service Protocol| JacEngine[Jac Graph Execution Server]
+    APIGateway -->|Jac Cloud API| JacHammer[JacHammer Cloud Engine: jachammer.ai]
 
-    subgraph Jac Core Architecture
-        JacEngine --> SessionNode[UserSessionNode: Photo OR Manual Attributes]
+    subgraph JacHammer Managed Agent Runtime
+        JacHammer --> SessionNode[UserSessionNode: Photo OR Manual Attributes]
         
         SessionNode -->|Walker: IntakeWalker| QGraph[Adaptive Question Node Graph: Baseline Dataset]
         QGraph -->|MC Choices + Free-form Text| AnsNode[AnswerHistoryNode]
@@ -27,23 +29,24 @@ graph TD
     ImageAdapter -->|Success (<10s)| RemoteImage[Rendered Avatar URL]
     ImageAdapter -->|Timeout / Error| SVGAdapter[Stylized SVG Fallback Renderer]
     
-    RemoteImage --> DB[(Jac Persistence DB)]
+    RemoteImage --> DB[(JacHammer Cloud Persistence DB)]
     SVGAdapter --> DB
     DB -->|Public Permalink /result/:sessionId| Client
 ```
 
 ---
 
-## 2. Component Integration: Baseline MBTI Engine
+## 2. Platform Integration: JacHammer ([jachammer.ai](https://jachammer.ai/))
 
-### 2.1 Question Dataset (`backend/data/mbti_questions_28.json`)
-- **Structure**: 28 situational questions mapping to 4 dichotomy pairs (`EI`, `SN`, `TF`, `JP`).
-- **Options**: Dual-choice (Option 1 vs Option 2) + free-form user context field.
+### 2.1 Role & Responsibilities
+- **Development Environment**: Local & cloud-synced Jac development workspace, AST validation, and agent debugging.
+- **Managed Agent Server**: Zero-devops serverless hosting of Jac stateful graphs, `IntakeWalker`, `TraitWalker`, and `AvatarWalker`.
+- **BYOM / Model Router**: Integrated gateway routing LLM requests for generative abilities (trait synthesis, title generation, prompt crafting).
+- **Database & State Storage**: Managed persistence engine storing completed `UserSessionNode` data for permalink rendering.
 
-### 2.2 Deterministic Scoring Calculator (`backend/jac/mbti_calculator.py`)
-- **Input**: List of answers `[{ dimension: "EI", choice: 1 }, ...]`
-- **Logic**: Increments dimension counters and enforces official Myers-Briggs tie-breaking rules (`I`, `N`, `F`, `P` on exact ties).
-- **Output**: `{ type: "ENTJ", scores: { E: 5, I: 2, S: 1, N: 6, T: 4, F: 3, J: 5, P: 2 } }`
+### 2.2 Component Integration: Baseline MBTI Engine
+- **Question Dataset (`backend/data/mbti_questions_28.json`)**: 28 situational questions mapping to 4 dichotomy pairs (`EI`, `SN`, `TF`, `JP`).
+- **Deterministic Scoring Calculator (`backend/jac/mbti_calculator.py`)**: Computes 4-letter MBTI baseline anchor code (`ENTJ`, `ENFP`, `INTP`, etc.).
 
 ---
 
@@ -59,21 +62,22 @@ graph TD
 
 ---
 
-## 4. API Transport Contracts (Next.js $\leftrightarrow$ Jac Server)
+## 4. API Transport Contracts (Next.js $\leftrightarrow$ JacHammer Cloud)
 
-1. **`POST /api/session/init`**: Initializes session & returns Q1.
+1. **`POST /api/session/init`**: Initializes session & returns Q1 via JacHammer endpoint.
 2. **`POST /api/quiz/answer`**: Submits choice (1 or 2) + optional freeform text, returns next question OR `completed: true`.
-3. **`GET /api/quiz/result/[sessionId]`**: Returns MBTI baseline anchor, unhinged title, radar data, and avatar image URL.
+3. **`GET /api/quiz/result/[sessionId]`**: Queries JacHammer persistence database for permalink payload.
 4. **`POST /api/avatar/re-roll`**: Re-rolls avatar with style preset.
 
 ---
 
 ## 5. Development Workstreams
 
-1. **Workstream 1: Jac Core & MBTI Engine (`backend/jac/`)**
-   - Integrate `mbti_questions_28.json` and `mbti_calculator.py`.
+1. **Workstream 1: Jac Core & JacHammer Cloud (`backend/jac/`)**
+   - Configure JacHammer project workspace and API environment keys.
    - Implement `IntakeWalker`, `TraitWalker`, and `AvatarWalker`.
 2. **Workstream 2: Image Adapter & Circuit Breaker (`backend/services/avatar/`)**
    - Build 3-layer prompt generator + 10s circuit breaker + SVG vector fallback renderer.
-3. **Workstream 3: Next.js Frontend (`frontend/`)**
+3. **Workstream 3: Next.js Frontend & JacHammer Deployment (`frontend/`)**
    - Build quiz UI (`/test`), public permalinks (`/result/[sessionId]`), deep analysis view, and $9:16$ story card exporter.
+   - Deploy Jac backend to JacHammer cloud and frontend to Vercel/Netlify.
