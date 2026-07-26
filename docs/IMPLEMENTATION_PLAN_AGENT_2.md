@@ -1,40 +1,36 @@
-# Implementation Plan — Agent 2: Trait & Title Synthesizer (`TraitWalker`)
+# Implementation Plan — Agent 2: Trait & Title Synthesizer (`TraitWalker` in Jac)
 
-Build and integrate **Agent 2 (`TraitWalker`)** to bridge deterministic MBTI dichotomy scoring with LLM-powered unhinged title synthesis, roasted behavioral analysis, 5-model radar metrics, and 3-layer visual avatar prompt contract generation.
+Build and integrate **Agent 2 (`TraitWalker`)** using 100% **Jac native constructs** (`by llm()` generative abilities, Jac graph nodes, and Jac walkers).
 
-## Strategy Rationale
-Integrating live LLM synthesis into Agent 2 ensures:
-- **Unhinged & Memorable Archetypes**: Replaces static placeholder titles with sharp, dynamic, meme-literate personality profiles (e.g. *"Captain of Unfinished Side-Quests"*, *"Mastermind of 3 AM Overthinking"*).
-- **Free-Form Text Analysis**: Incorporates user situational comments directly into the LLM synthesis prompt to produce hyper-tailored roasted breakdowns.
-- **Visual Theme Extraction**: Generates custom visual keywords (`visual_theme_keywords`) used by Agent 3 for caricature avatar rendering.
+## Strategy Rationale & Jac Prominence
+Implementing Agent 2 natively in Jac ensures:
+- **Native Jac LLM Synthesis (`by llm()`)**: Uses Jac's first-class `by llm(reason=...)` semantics directly inside `.jac` files for schema-driven LLM synthesis.
+- **Jac Graph Native Traversal**: Stores and connects synthesized archetypes on the Jac node graph (`UserSession ++> TraitArchetype`).
+- **Direct Jac Walker RPCs**: Executed natively via Jac walkers (`walker:pub SubmitLikeness`) without external python middleware layers.
 
 ---
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **LLM Provider Integration**:
-> - We will implement a resilient LLM synthesis handler in `backend/jac/trait_synthesizer.py` supporting OpenAI / Replicate / LiteLLM API providers, with an automatic fallback mechanism to deterministic rule-based title generation if no API key is set.
-> - **Inputs**: Deterministic MBTI 4-letter anchor code + 28-question answer choices + free-form user comments.
-> - **Outputs**: Unhinged custom title, 3-4 trait badges, sarcastic tagline, appearance vs. reality roast, 5-model radar metrics (0-100), and visual theme keywords.
+> **Jac LLM Syntax & Fallback**:
+> - **Jac Ability**: `can synthesize_archetype(mbti_code: str, comments: list[str]) -> dict by llm();` defined natively inside `endpoints.sv.jac`.
+> - **Fallback Engine**: Pure Jac helper method (`can fallback_synthesis -> dict`) if LLM provider is offline.
+> - **Inputs**: Deterministic MBTI 4-letter anchor code + free-form user comments.
+> - **Outputs**: Unhinged custom title, 3-4 trait badges, sarcastic tagline, appearance vs. reality roast, 5-model radar metrics (0-100), and visual theme keywords for Agent 3.
 
 ---
 
 ## Proposed Changes
 
-### Backend Architecture (`backend/`)
-
-#### [NEW] [backend/jac/trait_synthesizer.py](file:///Users/scottsimenel/Development/jac-hacks/backend/jac/trait_synthesizer.py)
-- Python synthesis module containing:
-  - System prompt engineering for witty, sarcastic, meme-literate profiler persona.
-  - JSON schema enforcement & validation (`TraitSynthesizerOutput`).
-  - Automatic fallback engine for offline execution when `OPENAI_API_KEY` / `REPLICATE_API_TOKEN` is unavailable.
+### Backend Architecture (100% Jac)
 
 #### [MODIFY] [endpoints.sv.jac](file:///Users/scottsimenel/Development/jac-hacks/endpoints.sv.jac)
-- Update `SubmitLikeness` and `GetResult` walkers to invoke `trait_synthesizer.synthesize_archetype()` passing the deterministic MBTI scores and user free-form answers.
+- Implement `can synthesize_archetype by llm()` directly inside `SubmitLikeness` walker.
+- Connect synthesized outputs to `TraitArchetype` node graph attributes.
 
 #### [MODIFY] [backend/jac/main.jac](file:///Users/scottsimenel/Development/jac-hacks/backend/jac/main.jac)
-- Update `TraitWalker` to execute LLM synthesis and store rich `TraitArchetypeNode` properties on the Jac graph.
+- Update `TraitWalker` to execute native Jac LLM synthesis and log trajectory details.
 
 ### Frontend Updates (`frontend.cl.jac` & `components/`)
 
@@ -46,10 +42,10 @@ Integrating live LLM synthesis into Agent 2 ensures:
 ## Verification Plan
 
 ### Automated Verification
-- **Unit & Integration Test**: Create `backend/tests/test_agent_2.py` testing deterministic fallback + LLM synthesis payload parsing.
-- **Jac Compilation Check**: Verify `~/.local/bin/jac check main.jac` (100% pass).
+- **Jac Type-Check**: Verify `~/.local/bin/jac check main.jac` passes with 0 errors.
+- **Jac Graph Execution Test**: Execute `~/.local/bin/jac run backend/jac/main.jac`.
 
 ### Manual Verification
-- Execute `SubmitLikeness` walker with hybrid inputs (choices + free-form comment `"I spend 3 hours picking a movie then fall asleep"`).
+- Test `SubmitLikeness` walker with hybrid inputs (choices + free-form comment `"I spend 3 hours picking a movie then fall asleep"`).
 - Verify that `unhinged_title` and `top_traits` dynamically reflect the free-form text.
 - Verify Deep Analysis radar chart metrics render cleanly on `ResultScreen`.
